@@ -1,0 +1,14 @@
+{
+  "name": "studydesk",
+  "version": "1.0.0",
+  "description": "Grade calculator for parciales, homework tracker, class schedule and pomodoro timer. Works offline, no account needed.",
+  "private": true,
+  "scripts": {
+    "test": "node --test \"tests/**/*.test.js\"",
+    "start": "npx --yes serve ."
+  },
+  "keywords": ["students", "grades", "pomodoro", "pwa", "honduras"],
+  "author": "Asaf Rojas (Sworfish Tech)",
+  "license": "MIT",
+  "engines": { "node": ">=22" }
+}

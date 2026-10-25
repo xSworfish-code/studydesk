@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>StudyDesk</title>
+  <meta name="description" content="StudyDesk: grade calculator for parciales, homework tracker, class schedule and pomodoro timer. Works offline, no account needed.">
+  <meta name="author" content="Asaf Rojas — Sworfish Tech">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#F6F8FC" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0E1428" media="(prefers-color-scheme: dark)">
+  <!-- Strict CSP: only files from this site, no network requests at all, no inline code, Trusted Types enforced -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' file:; style-src 'self' file:; font-src 'self' file:; img-src 'self' data: file:; manifest-src 'self'; worker-src 'self'; connect-src 'self'; media-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'; require-trusted-types-for 'script'; trusted-types studydesk-sw">
+  <meta name="referrer" content="no-referrer">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main" data-i18n="skip"></a>
+
+  <div class="shell">
+    <!-- ======================= Sidebar (desktop) ======================= -->
+    <aside class="rail" aria-label="StudyDesk">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="5" width="34" height="30" rx="5" class="bm-paper"/><path d="M3 13h34M11 5v30" class="bm-line"/><path d="M16 22l4 4 9-10" class="bm-check"/></svg>
+        <div>
+          <p class="brand-name">StudyDesk</p>
+          <p class="brand-tag" data-i18n="tagline"></p>
+        </div>
+      </div>
+      <nav class="rail-nav" aria-label="Main">
+        <button type="button" class="nav-btn" data-view="today"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6" class="fill"/></svg><span data-i18n="nav.today"></span></button>
+        <button type="button" class="nav-btn" data-view="grades"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/><path d="M3 20h18"/></svg><span data-i18n="nav.grades"></span></button>
+        <button type="button" class="nav-btn" data-view="tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/></svg><span data-i18n="nav.tasks"></span></button>
+        <button type="button" class="nav-btn" data-view="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="nav.schedule"></span></button>
+        <button type="button" class="nav-btn" data-view="focus"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4M9 2h6"/></svg><span data-i18n="nav.focus"></span></button>
+      </nav>
+      <button type="button" class="nav-btn settings-btn" data-view="settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span data-i18n="nav.settings"></span></button>
+    </aside>
+
+    <!-- ======================= Top bar (mobile) ======================= -->
+    <header class="topbar">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="5" width="34" height="30" rx="5" class="bm-paper"/><path d="M3 13h34M11 5v30" class="bm-line"/><path d="M16 22l4 4 9-10" class="bm-check"/></svg>
+        <p class="brand-name">StudyDesk</p>
+      </div>
+      <button type="button" class="icon-btn" data-view="settings" data-i18n-aria="nav.settings"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg></button>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <!-- ============================ TODAY ============================ -->
+      <section class="view" id="view-today" data-view-id="today" aria-labelledby="h-today">
+        <header class="view-head">
+          <p class="eyebrow-date" id="today-date"></p>
+          <h1 id="h-today"><span class="hl" id="today-greeting"></span></h1>
+        </header>
+        <div class="today-grid">
+          <article class="card class-card" id="today-class">
+            <p class="card-label" id="today-class-label"></p>
+            <p class="class-name" id="today-class-name"></p>
+            <p class="class-meta" id="today-class-meta"></p>
+            <div class="next-line" id="today-next" hidden>
+              <span class="card-label" data-i18n="today.next"></span>
+              <span id="today-next-text"></span>
+            </div>
+          </article>
+          <article class="card avg-card" id="today-avg">
+            <p class="card-label" data-i18n="today.average"></p>
+            <p class="big-number" id="today-avg-number">—</p>
+            <p class="card-note" id="today-avg-note"></p>
+          </article>
+          <article class="card tasks-card">
+            <div class="card-top">
+              <p class="card-label" data-i18n="today.tasks"></p>
+              <button type="button" class="link-btn" data-view="tasks" data-i18n="today.seeAll"></button>
+            </div>
+            <ul class="mini-tasks" id="today-tasks"></ul>
+          </article>
+          <article class="card focus-card">
+            <p class="card-label" data-i18n="today.focus"></p>
+            <p class="big-number" id="today-focus-count">0</p>
+            <button type="button" class="btn btn-primary" id="today-focus-btn" data-i18n="today.startFocus"></button>
+          </article>
+        </div>
+      </section>
+
+      <!-- ============================ GRADES ============================ -->
+      <section class="view" id="view-grades" data-view-id="grades" aria-labelledby="h-grades" hidden>
+        <header class="view-head">
+          <h1 id="h-grades"><span class="hl" data-i18n="gr.title"></span></h1>
+        </header>
+        <div class="segmented gr-tabs" role="tablist" data-i18n-aria="gr.title">
+          <button type="button" role="tab" id="tab-school" aria-controls="gr-school" data-gr-tab="school" data-i18n="gr.tabSchool"></button>
+          <button type="button" role="tab" id="tab-uni" aria-controls="gr-uni" data-gr-tab="uni" data-i18n="gr.tabUni"></button>
+        </div>
+
+        <div id="gr-school" role="tabpanel" aria-labelledby="tab-school">
+        <p class="lead" id="gr-lead"></p>
+        <article class="card year-card" id="year-card">
+          <div class="year-main">
+            <p class="card-label" data-i18n="yr.title"></p>
+            <p class="big-number" id="year-avg">—</p>
+            <p class="year-equiv" id="year-equiv"></p>
+          </div>
+          <div class="year-side">
+            <p class="year-passing" id="year-passing"></p>
+            <p class="card-label" id="year-per-label"></p>
+            <ol class="per-parcial" id="year-per"></ol>
+          </div>
+          <p class="hint year-hint" data-i18n="yr.equivHint"></p>
+        </article>
+        <form class="add-row" id="subject-form" novalidate>
+          <label class="field grow"><span data-i18n="gr.subjectName"></span>
+            <input id="subject-name" class="input" type="text" maxlength="60" autocomplete="off" required data-i18n-placeholder="gr.subjectPlaceholder"></label>
+          <fieldset class="swatches"><legend data-i18n="gr.color"></legend><div id="subject-colors" class="swatch-row"></div></fieldset>
+          <button type="submit" class="btn btn-primary" data-i18n="gr.addSubject"></button>
+        </form>
+        <p class="empty" id="subjects-empty" data-i18n="gr.empty"></p>
+        <div class="subjects" id="subject-list"></div>
+        </div>
+
+        <div id="gr-uni" role="tabpanel" aria-labelledby="tab-uni" hidden>
+          <p class="lead" data-i18n="uni.lead"></p>
+          <div class="uni-stats">
+            <article class="card"><p class="card-label" data-i18n="uni.global"></p><p class="big-number" id="uni-global">—</p><p class="hint" data-i18n="uni.globalHint"></p></article>
+            <article class="card"><p class="card-label" data-i18n="uni.graduation"></p><p class="big-number" id="uni-grad">—</p><p class="hint" data-i18n="uni.graduationHint"></p></article>
+            <article class="card"><p class="card-label" data-i18n="uni.credits"></p><p class="big-number" id="uni-credits">0</p><p class="hint" id="uni-credits-of"></p></article>
+            <article class="card"><p class="card-label" data-i18n="uni.gpa"></p><p class="big-number" id="uni-gpa">—</p><p class="hint" id="uni-min-note"></p></article>
+          </div>
+          <form class="add-row" id="period-form" novalidate>
+            <label class="field grow"><span data-i18n="uni.periodName"></span>
+              <input id="period-name" class="input" type="text" maxlength="60" autocomplete="off" required data-i18n-placeholder="uni.periodPlaceholder"></label>
+            <button type="submit" class="btn btn-primary" data-i18n="uni.addPeriod"></button>
+          </form>
+          <p class="empty" id="periods-empty" data-i18n="uni.empty"></p>
+          <div class="periods" id="period-list"></div>
+        </div>
+      </section>
+
+      <!-- ============================ TASKS ============================ -->
+      <section class="view" id="view-tasks" data-view-id="tasks" aria-labelledby="h-tasks" hidden>
+        <header class="view-head">
+          <h1 id="h-tasks"><span class="hl hl-pink" data-i18n="tk.title"></span></h1>
+          <p class="lead" data-i18n="tk.lead"></p>
+        </header>
+        <form class="add-row" id="task-form" novalidate>
+          <label class="field grow"><span data-i18n="tk.what"></span>
+            <input id="task-title" class="input" type="text" maxlength="120" autocomplete="off" required data-i18n-placeholder="tk.placeholder"></label>
+          <label class="field"><span data-i18n="common.subject"></span>
+            <select id="task-subject" class="input"></select></label>
+          <label class="field"><span data-i18n="tk.due"></span>
+            <input id="task-due" class="input" type="date"></label>
+          <button type="submit" class="btn btn-primary" data-i18n="tk.add"></button>
+        </form>
+        <p class="empty" id="tasks-empty" data-i18n="tk.empty"></p>
+        <div id="task-groups"></div>
+      </section>
+
+      <!-- ============================ SCHEDULE ============================ -->
+      <section class="view" id="view-schedule" data-view-id="schedule" aria-labelledby="h-schedule" hidden>
+        <header class="view-head">
+          <h1 id="h-schedule"><span class="hl hl-green" data-i18n="sc.title"></span></h1>
+          <p class="lead" data-i18n="sc.lead"></p>
+        </header>
+        <form class="add-row wrap" id="block-form" novalidate>
+          <label class="field"><span data-i18n="sc.day"></span><select id="block-day" class="input"></select></label>
+          <label class="field"><span data-i18n="sc.start"></span><input id="block-start" class="input" type="time" value="07:00" required></label>
+          <label class="field"><span data-i18n="sc.end"></span><input id="block-end" class="input" type="time" value="07:45" required></label>
+          <label class="field"><span data-i18n="common.subject"></span><select id="block-subject" class="input"></select></label>
+          <label class="field"><span data-i18n="sc.label"></span><input id="block-label" class="input" type="text" maxlength="60" autocomplete="off" data-i18n-placeholder="sc.labelPlaceholder"></label>
+          <label class="field"><span data-i18n="sc.room"></span><input id="block-room" class="input" type="text" maxlength="30" autocomplete="off"></label>
+          <button type="submit" class="btn btn-primary" data-i18n="sc.add"></button>
+        </form>
+        <p class="form-msg" id="block-msg" role="status"></p>
+        <p class="empty" id="schedule-empty" data-i18n="sc.empty"></p>
+        <div class="week" id="week"></div>
+      </section>
+
+      <!-- ============================ POMODORO ============================ -->
+      <section class="view" id="view-focus" data-view-id="focus" aria-labelledby="h-focus" hidden>
+        <header class="view-head">
+          <h1 id="h-focus"><span class="hl hl-orange" data-i18n="po.title"></span></h1>
+          <p class="lead" data-i18n="po.lead"></p>
+        </header>
+        <div class="timer-wrap">
+          <div class="mode-chips" role="radiogroup" aria-labelledby="h-focus">
+            <button type="button" role="radio" data-mode="focus" data-i18n="po.focus"></button>
+            <button type="button" role="radio" data-mode="short" data-i18n="po.short"></button>
+            <button type="button" role="radio" data-mode="long" data-i18n="po.long"></button>
+          </div>
+          <div class="ring" id="ring">
+            <svg viewBox="0 0 220 220" aria-hidden="true">
+              <circle cx="110" cy="110" r="96" class="ring-track"/>
+              <circle cx="110" cy="110" r="96" class="ring-progress" id="ring-progress"/>
+            </svg>
+            <div class="ring-center">
+              <p class="timer" id="timer" role="timer" aria-live="off">25:00</p>
+              <p class="round" id="round"></p>
+            </div>
+          </div>
+          <div class="timer-actions">
+            <button type="button" class="btn btn-primary btn-lg" id="po-toggle" data-i18n="po.start"></button>
+            <button type="button" class="btn btn-ghost" id="po-reset" data-i18n="po.reset"></button>
+            <button type="button" class="btn btn-ghost" id="po-skip" data-i18n="po.skip"></button>
+          </div>
+          <p class="today-stats" id="po-stats"></p>
+          <button type="button" class="link-btn" id="po-notify" data-i18n="po.notify"></button>
+        </div>
+        <details class="sheet">
+          <summary data-i18n="po.minutes"></summary>
+          <div class="sheet-grid">
+            <label class="field"><span data-i18n="po.work"></span><input id="po-work" class="input" type="number" min="1" max="120" inputmode="numeric"></label>
+            <label class="field"><span data-i18n="po.shortLen"></span><input id="po-short" class="input" type="number" min="1" max="60" inputmode="numeric"></label>
+            <label class="field"><span data-i18n="po.longLen"></span><input id="po-long" class="input" type="number" min="1" max="90" inputmode="numeric"></label>
+            <label class="field"><span data-i18n="po.rounds"></span><input id="po-rounds" class="input" type="number" min="2" max="10" inputmode="numeric"></label>
+          </div>
+        </details>
+      </section>
+
+      <!-- ============================ SETTINGS ============================ -->
+      <section class="view" id="view-settings" data-view-id="settings" aria-labelledby="h-settings" hidden>
+        <header class="view-head">
+          <h1 id="h-settings"><span class="hl hl-blue" data-i18n="set.title"></span></h1>
+        </header>
+        <div class="settings">
+          <section class="card setting">
+            <h2 data-i18n="set.grading"></h2>
+            <div class="sheet-grid">
+              <label class="field"><span data-i18n="set.parciales"></span>
+                <select id="set-parciales" class="input"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+              <label class="field"><span data-i18n="set.min"></span><input id="set-min" class="input" type="number" min="1" max="100" inputmode="numeric"></label>
+            </div>
+            <p class="hint" data-i18n="set.gradingHint"></p>
+          </section>
+          <section class="card setting">
+            <h2 data-i18n="set.system"></h2>
+            <div class="segmented" role="group" data-i18n-aria="set.system">
+              <button type="button" data-set-system="hn" data-i18n="set.systemHn"></button>
+              <button type="button" data-set-system="us" data-i18n="set.systemUs"></button>
+            </div>
+            <p class="hint" data-i18n="set.systemHint"></p>
+          </section>
+          <section class="card setting">
+            <h2 data-i18n="gr.tabUni"></h2>
+            <div class="sheet-grid">
+              <label class="field"><span data-i18n="set.uniMin"></span><input id="set-uni-min" class="input" type="number" min="1" max="100" inputmode="numeric"></label>
+            </div>
+            <p class="hint" data-i18n="set.uniHint"></p>
+          </section>
+          <section class="card setting">
+            <h2 data-i18n="set.language"></h2>
+            <div class="segmented" role="group" data-i18n-aria="set.language">
+              <button type="button" data-set-lang="es" lang="es">Español</button>
+              <button type="button" data-set-lang="en" lang="en">English</button>
+            </div>
+          </section>
+          <section class="card setting">
+            <h2 data-i18n="set.backup"></h2>
+            <p class="hint" data-i18n="set.backupHint"></p>
+            <div class="btn-row">
+              <button type="button" class="btn btn-primary" id="export-btn" data-i18n="set.export"></button>
+              <label class="btn btn-secondary file-btn"><span data-i18n="set.import"></span><input type="file" id="import-file" accept="application/json,.json" class="visually-hidden"></label>
+            </div>
+          </section>
+          <section class="card setting" id="install-card" hidden>
+            <h2 data-i18n="set.install"></h2>
+            <p class="hint" data-i18n="set.installHint"></p>
+            <button type="button" class="btn btn-secondary" id="install-btn" hidden data-i18n="set.installBtn"></button>
+          </section>
+          <section class="card setting danger">
+            <h2 data-i18n="set.danger"></h2>
+            <p class="hint" data-i18n="set.dangerHint"></p>
+            <button type="button" class="btn btn-danger" id="clear-btn" data-i18n="set.danger"></button>
+          </section>
+          <p class="privacy-note" data-i18n="set.privacy"></p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span data-i18n="footer"></span>
+        <a class="repo-link" href="https://github.com/xSworfish-code/studydesk" rel="noopener noreferrer">GitHub</a>
+      </footer>
+    </main>
+
+    <!-- ======================= Tab bar (mobile) ======================= -->
+    <nav class="tabbar" aria-label="Main">
+      <button type="button" class="tab-btn" data-view="today"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><circle cx="12" cy="15" r="1.6" class="fill"/></svg><span data-i18n="nav.today"></span></button>
+      <button type="button" class="tab-btn" data-view="grades"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6"/><path d="M3 20h18"/></svg><span data-i18n="nav.grades"></span></button>
+      <button type="button" class="tab-btn" data-view="tasks"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12l3 3 5-6"/></svg><span data-i18n="nav.tasks"></span></button>
+      <button type="button" class="tab-btn" data-view="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span data-i18n="nav.schedule"></span></button>
+      <button type="button" class="tab-btn" data-view="focus"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"/><path d="M12 9v4M9 2h6"/></svg><span data-i18n="nav.focus"></span></button>
+    </nav>
+  </div>
+
+  <!-- Confirmation dialog -->
+  <dialog id="confirm-dialog" class="dialog">
+    <form method="dialog">
+      <p id="confirm-text"></p>
+      <div class="btn-row end">
+        <button value="cancel" class="btn btn-ghost" data-i18n="common.cancel"></button>
+        <button value="ok" class="btn btn-danger" id="confirm-ok" data-i18n="common.confirm"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Parcial activities editor -->
+  <dialog id="items-dialog" class="dialog wide" aria-labelledby="items-title">
+    <h2 id="items-title"></h2>
+    <p class="hint" id="items-info"></p>
+    <ul class="items" id="items-list"></ul>
+    <form class="add-row compact" id="item-form" novalidate>
+      <label class="field grow"><span data-i18n="gr.itemName"></span><input id="item-name" class="input" type="text" maxlength="60" autocomplete="off" data-i18n-placeholder="gr.itemNamePlaceholder"></label>
+      <label class="field small"><span data-i18n="gr.itemValue"></span><input id="item-value" class="input" type="number" min="0" max="100" step="0.5" inputmode="decimal"></label>
+      <label class="field small"><span data-i18n="gr.itemScore"></span><input id="item-score" class="input" type="number" min="0" max="100" step="0.5" inputmode="decimal"></label>
+      <button type="submit" class="btn btn-secondary" data-i18n="gr.addItem"></button>
+    </form>
+    <div class="btn-row end"><button type="button" class="btn btn-primary" id="items-close" data-i18n="common.close"></button></div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/grades.js"></script>
+  <script src="js/planner.js"></script>
+  <script src="js/pomodoro.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
